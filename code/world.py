@@ -3,8 +3,6 @@ from .settings import TILE_SIZE
 class World:
 
     def __init__(self, columns, rows, width, height):
-        self.grid_length_x = columns
-        self.grid_length_y = rows
         self.width = width
         self.height = height
         self.world = self.create_world(columns, rows)
