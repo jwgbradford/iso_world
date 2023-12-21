@@ -9,7 +9,7 @@ class Game:
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
-        self.world = World(WORLD_SIZE)
+        self.world = World(WORLD_SIZE, self.width, self.height)
 
     def run(self):
         self.playing = True
@@ -36,12 +36,17 @@ class Game:
 
     def draw(self):
         self.screen.fill((0, 0, 0))
+        self.screen.blit(self.world.grass_tiles, (0, 0))
         for x in range(WORLD_SIZE[0]):
             for y in range(WORLD_SIZE[1]):
-                sq = self.world.world[x][y]["cart_rect"]
-                tile = Rect(sq[0][0], sq[0][1], TILE_SIZE, TILE_SIZE)
-                draw.rect(self.screen, (0, 0, 255), tile, 1)
-                p = self.world.world[x][y]["iso_poly"]
-                p = [(x + self.width/2, y + self.height/4) for x, y in p]
-                draw.polygon(self.screen, (255, 0, 0), p, 1)
+                render_pos =  self.world.world_map[x][y]["render_pos"]
+                tile = self.world.world_map[x][y]["tile"]
+                if tile != "":
+                    self.screen.blit(
+                        self.world.tiles[tile],
+                        (
+                            render_pos[0] + self.width/2,
+                            render_pos[1] + self.height/4 - (self.world.tiles[tile].get_height() - TILE_SIZE)
+                        )
+                    )
         display.flip()
