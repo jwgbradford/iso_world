@@ -1,13 +1,11 @@
-import pygame as pg
 from .settings import TILE_SIZE
+
 class World:
+    def __init__(self, size):
+        self.world = self.create_world(size)
 
-    def __init__(self, columns, rows, width, height):
-        self.width = width
-        self.height = height
-        self.world = self.create_world(columns, rows)
-
-    def create_world(self, c, r):
+    def create_world(self, size):
+        c, r = size
         world = []
         for col in range(c):
             world.append([])

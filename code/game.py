@@ -1,16 +1,15 @@
-import pygame as pg
-import sys
+from pygame import event, draw, display, Rect, quit, QUIT, KEYDOWN, K_ESCAPE
+from sys import exit
 from .world import World
-from .settings import TILE_SIZE
+from .settings import TILE_SIZE, WORLD_SIZE
 
 
 class Game:
-
     def __init__(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
-        self.world = World(10, 10, self.width, self.height)
+        self.world = World(WORLD_SIZE)
 
     def run(self):
         self.playing = True
@@ -21,31 +20,28 @@ class Game:
             self.draw()
 
     def events(self):
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                pg.quit()
-                sys.exit()
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    pg.quit()
-                    sys.exit()
+        for my_event in event.get():
+            if my_event.type == QUIT:
+                self.quit_game()
+            if my_event.type == KEYDOWN:
+                if my_event.key == K_ESCAPE:
+                    self.quit_game()
+
+    def quit_game(self):
+        quit()
+        exit()
 
     def update(self):
         pass
 
     def draw(self):
         self.screen.fill((0, 0, 0))
-
-        for x in range(self.world.grid_length_x):
-            for y in range(self.world.grid_length_y):
-
+        for x in range(WORLD_SIZE[0]):
+            for y in range(WORLD_SIZE[1]):
                 sq = self.world.world[x][y]["cart_rect"]
-                rect = pg.Rect(sq[0][0], sq[0][1], TILE_SIZE, TILE_SIZE)
-                pg.draw.rect(self.screen, (0, 0, 255), rect, 1)
-
+                tile = Rect(sq[0][0], sq[0][1], TILE_SIZE, TILE_SIZE)
+                draw.rect(self.screen, (0, 0, 255), tile, 1)
                 p = self.world.world[x][y]["iso_poly"]
                 p = [(x + self.width/2, y + self.height/4) for x, y in p]
-                pg.draw.polygon(self.screen, (255, 0, 0), p, 1)
-
-
-        pg.display.flip()
+                draw.polygon(self.screen, (255, 0, 0), p, 1)
+        display.flip()
