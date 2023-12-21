@@ -2,14 +2,16 @@ from pygame import event, draw, display, Rect, quit, QUIT, KEYDOWN, K_ESCAPE
 from sys import exit
 from .world import World
 from .settings import TILE_SIZE, WORLD_SIZE
-
+from .utils import draw_text
+from .camera import Camera
 
 class Game:
     def __init__(self, screen, clock):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
-        self.world = World(WORLD_SIZE, self.width, self.height)
+        self.world = World(WORLD_SIZE)
+        self.camera = Camera(self.width, self.height)
 
     def run(self):
         self.playing = True
@@ -32,11 +34,13 @@ class Game:
         exit()
 
     def update(self):
-        pass
+        self.camera.update()
 
     def draw(self):
+        scroll_x = self.camera.scroll.x
+        scroll_y = self.camera.scroll.y
         self.screen.fill((0, 0, 0))
-        self.screen.blit(self.world.grass_tiles, (0, 0))
+        self.screen.blit(self.world.world_base, (scroll_x, scroll_y))
         for x in range(WORLD_SIZE[0]):
             for y in range(WORLD_SIZE[1]):
                 render_pos =  self.world.world_map[x][y]["render_pos"]
@@ -45,8 +49,15 @@ class Game:
                     self.screen.blit(
                         self.world.tiles[tile],
                         (
-                            render_pos[0] + self.width/2,
-                            render_pos[1] + self.height/4 - (self.world.tiles[tile].get_height() - TILE_SIZE)
+                            render_pos[0] + self.world.world_base.get_width() / 2 + scroll_x,
+                            render_pos[1] + (self.world.tiles[tile].get_height() - TILE_SIZE) + scroll_y
                         )
                     )
+        draw_text(
+            self.screen,
+            'fps={}'.format(round(self.clock.get_fps())),
+            25,
+            (255, 255, 255),
+            (10, 10)
+        )
         display.flip()
