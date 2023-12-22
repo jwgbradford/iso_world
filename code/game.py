@@ -41,18 +41,8 @@ class Game:
         scroll_y = self.camera.scroll.y
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.world.world_base, (scroll_x, scroll_y))
-        for x in range(WORLD_SIZE[0]):
-            for y in range(WORLD_SIZE[1]):
-                render_pos =  self.world.world_map[x][y]["render_pos"]
-                tile = self.world.world_map[x][y]["tile"]
-                if tile != "":
-                    self.screen.blit(
-                        self.world.tiles[tile],
-                        (
-                            render_pos[0] + self.world.world_base.get_width() / 2 + scroll_x,
-                            render_pos[1] + (self.world.tiles[tile].get_height() - TILE_SIZE) + scroll_y
-                        )
-                    )
+        self.screen.blit(self.world.world_items, (scroll_x, scroll_y))
+
         draw_text(
             self.screen,
             'fps={}'.format(round(self.clock.get_fps())),

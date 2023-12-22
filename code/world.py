@@ -8,11 +8,33 @@ class World:
         self.tiles = self.load_images()
         self.world_map = self.create_world_map(size)
         self.world_base = self.create_world_base(size)
+        self.world_items = self.show_items(size)
 
+    def show_items(self, size):
+        c, r = size
+        item_surface = Surface((
+            size[0] * TILE_SIZE * 2, 
+            size[1] * TILE_SIZE + TILE_SIZE * 5)
+        ).convert_alpha()
+        item_surface.fill([0,0,0,0]) # set transparency
+        for x in range(c):
+            for y in range(r):
+                render_pos =  self.world_map[x][y]["render_pos"]
+                tile = self.world_map[x][y]["tile"]
+                if tile != "":
+                    item_surface.blit(
+                        self.tiles[tile],
+                        (
+                            render_pos[0] + self.world_base.get_width() / 2,
+                            render_pos[1] - self.tiles[tile].get_height() * 0.75 + TILE_SIZE * 2
+                        )
+                    )#+ - TILE_SIZE)
+        return item_surface
+    
     def create_world_base(self, size):
         base_surface = Surface((
             size[0] * TILE_SIZE * 2, 
-            size[1] * TILE_SIZE + 2 * TILE_SIZE)
+            size[1] * TILE_SIZE + TILE_SIZE * 6)
         ).convert_alpha()
         c, r = size
         for col in range(c):
@@ -20,7 +42,10 @@ class World:
                 render_pos = self.world_map[col][row]["render_pos"]
                 base_surface.blit(
                     self.tiles["block"], 
-                    (render_pos[0] + base_surface.get_width() / 2, render_pos[1])
+                    (
+                        render_pos[0] + base_surface.get_width() / 2, 
+                        render_pos[1] + TILE_SIZE * 2
+                    )
                 )
         return base_surface
     
@@ -49,15 +74,18 @@ class World:
         r = randint(1, 100)
         perlin = 100 * pnoise2(col/perlin_scale, row/perlin_scale)
 
-        if (perlin >= 15) or (perlin <= -35):
+        if perlin >= 15:
             tile = "tree"
+        elif perlin <= -35:
+            tile = "rock"
         else:
             if r == 1:
                 tile = "tree"
             elif r == 2:
                 tile = "rock"
             else:
-                tile = ""        
+                tile = ""
+        tile = 'tree' # testing placement
         out = {
             "grid": [col, row],
             "cart_rect": tile,
@@ -69,7 +97,7 @@ class World:
 
     def cart_to_iso(self, x, y):
         iso_x = x - y
-        iso_y = (x + y)/2
+        iso_y = (x + y) / 2
         return iso_x, iso_y
     
     def load_images(self):

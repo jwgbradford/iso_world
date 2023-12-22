@@ -1,4 +1,5 @@
 from pygame import mouse, Vector2, key, K_RIGHT, K_LEFT, K_UP, K_DOWN
+from .settings import WORLD_SIZE, TILE_SIZE
 
 class Camera:
 
@@ -7,7 +8,10 @@ class Camera:
         self.width = width
         self.height = height
 
-        self.scroll = Vector2(0, 0)
+        self.scroll = Vector2(
+            (WORLD_SIZE[0] * TILE_SIZE * -1) + (width / 2), 
+            (WORLD_SIZE[1] * TILE_SIZE * -0.5) + (height / 2)
+            )
         self.dx = 0
         self.dy = 0
         self.speed = 25
