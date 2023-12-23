@@ -41,8 +41,8 @@ class Game:
         scroll_y = self.camera.scroll.y
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.world.world_base, (scroll_x, scroll_y))
-        self.screen.blit(self.world.world_items, (scroll_x, scroll_y))
-
+        self.draw_items(scroll_x, scroll_y)
+        #self.screen.blit(self.world.world_items, (scroll_x, scroll_y))
         draw_text(
             self.screen,
             'fps={}'.format(round(self.clock.get_fps())),
@@ -51,3 +51,35 @@ class Game:
             (10, 10)
         )
         display.flip()
+
+    def draw_items(self, scroll_x, scroll_y):
+        c, r = WORLD_SIZE
+        for x in range(c):
+            for y in range(r):
+                render_pos =  self.world.world_map[x][y]["render_pos"]
+                tile = self.world.world_map[x][y]["tile"]
+                if self.is_visible(scroll_x, scroll_y, render_pos, tile):
+                    self.screen.blit(
+                        self.world.tiles[tile],
+                        (
+                            render_pos[0] + self.world.world_base.get_width() / 2,
+                            render_pos[1] - self.world.tiles[tile].get_height() * 0.75 + TILE_SIZE * 2
+                        )
+                    )
+                    #print('render')
+
+    def is_visible(self, scroll_x, scroll_y, render_pos, tile):
+        if tile == "":
+            return False
+        else:
+            return True
+        max_x = scroll_x + self.width / 2
+        min_x = scroll_x - self.width / 2
+        max_y = scroll_y + self.height / 2
+        min_y = scroll_y - self.height / 2
+        render_x = render_pos[0] + self.world.world_base.get_width() / 2
+        render_y = render_pos[1] - self.world.tiles[tile].get_height() * 0.75 + TILE_SIZE * 2
+        if render_x >= min_x and render_x <= max_x and render_y >= min_y and render_y <= max_y:
+            return True
+        else:
+            return False

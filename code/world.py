@@ -14,7 +14,7 @@ class World:
         c, r = size
         item_surface = Surface((
             size[0] * TILE_SIZE * 2, 
-            size[1] * TILE_SIZE + TILE_SIZE * 5)
+            size[1] * TILE_SIZE + TILE_SIZE * 6)
         ).convert_alpha()
         item_surface.fill([0,0,0,0]) # set transparency
         for x in range(c):
@@ -28,7 +28,7 @@ class World:
                             render_pos[0] + self.world_base.get_width() / 2,
                             render_pos[1] - self.tiles[tile].get_height() * 0.75 + TILE_SIZE * 2
                         )
-                    )#+ - TILE_SIZE)
+                    )
         return item_surface
     
     def create_world_base(self, size):
@@ -85,7 +85,7 @@ class World:
                 tile = "rock"
             else:
                 tile = ""
-        tile = 'tree' # testing placement
+        #tile = 'tree' # testing placement
         out = {
             "grid": [col, row],
             "cart_rect": tile,
